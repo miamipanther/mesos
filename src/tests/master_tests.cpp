@@ -2260,6 +2260,18 @@ TEST_F(MasterTest, MetricsInMetricsEndpoint)
   EXPECT_EQ(1u, snapshot.values.count("master/slaves_active"));
   EXPECT_EQ(1u, snapshot.values.count("master/slaves_inactive"));
   EXPECT_EQ(1u, snapshot.values.count("master/slaves_unreachable"));
+  EXPECT_EQ(1u, snapshot.values.count(
+      "master/slaves_25_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot.values.count(
+      "master/slaves_50_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot.values.count(
+      "master/slaves_75_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot.values.count(
+      "master/slaves_90_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot.values.count(
+      "master/slaves_99_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot.values.count(
+      "master/slaves_100_percent_reregistered_secs"));
 
   EXPECT_EQ(1u, snapshot.values.count("master/frameworks_connected"));
   EXPECT_EQ(1u, snapshot.values.count("master/frameworks_disconnected"));

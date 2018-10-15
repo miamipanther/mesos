@@ -1701,8 +1701,8 @@ Future<Nothing> Master::_recover(const Registry& registry)
   // the allocator is already initialized and ready to perform
   // allocations. An allocator may decide to hold off with allocation
   // until after it restores a view of the cluster state.
-  int expectedAgentCount = registry.slaves().slaves().size();
-  allocator->recover(expectedAgentCount, quotas);
+  expectedAgentCount = registry.slaves().slaves().size();
+  allocator->recover(expectedAgentCount.get(), quotas);
 
   // TODO(alexr): Consider adding a sanity check: whether quotas are
   // satisfiable given all recovering agents reregister. We may want
@@ -1841,6 +1841,56 @@ void Master::doRegistryGc()
                  toRemoveUnreachable,
                  toRemoveGone,
                  lambda::_1));
+}
+
+
+void Master::updateReregistrationMetrics()
+{
+  double t = (process::Clock::now() - electedTime.get()).secs();
+
+  // In order to prevent float equal comparison, we use integer comparison,
+  // instead of: slavesRegistered >= expectedAgentCount * 0.25
+  // we compare: slavesRegistered * 100 >= expectedAgentCount * 25
+
+  // slavesRegistered multiply 100;
+  int64_t slavesRegistered100 =
+      metrics->slave_reregistrations.value().get() * 100;
+
+  if((metrics->slaves_25_percent_reregistered_secs.value().get() == 0.0)
+    && (slavesRegistered100 >= expectedAgentCount.get() * 25))
+  {
+    metrics->slaves_25_percent_reregistered_secs = t;
+  }
+
+  if((metrics->slaves_50_percent_reregistered_secs.value().get() == 0.0)
+    && (slavesRegistered100 >= expectedAgentCount.get() * 50))
+  {
+    metrics->slaves_50_percent_reregistered_secs = t;
+  }
+
+  if((metrics->slaves_75_percent_reregistered_secs.value().get() == 0.0)
+    && (slavesRegistered100 >= expectedAgentCount.get() * 75))
+  {
+    metrics->slaves_75_percent_reregistered_secs = t;
+  }
+
+  if((metrics->slaves_90_percent_reregistered_secs.value().get() == 0.0)
+    && (slavesRegistered100 >= expectedAgentCount.get() * 90))
+  {
+    metrics->slaves_90_percent_reregistered_secs = t;
+  }
+
+  if((metrics->slaves_99_percent_reregistered_secs.value().get() == 0.0)
+    && (slavesRegistered100 >= expectedAgentCount.get() * 99))
+  {
+    metrics->slaves_99_percent_reregistered_secs = t;
+  }
+
+  if((metrics->slaves_100_percent_reregistered_secs.value().get() == 0.0)
+    && (slavesRegistered100 >= expectedAgentCount.get() * 100))
+  {
+    metrics->slaves_100_percent_reregistered_secs = t;
+  }
 }
 
 
@@ -7590,6 +7640,8 @@ void Master::__reregisterSlave(
   slave->reregisteredTime = Clock::now();
 
   ++metrics->slave_reregistrations;
+
+  updateReregistrationMetrics();
 
   slaves.removed.erase(slave->id);
   slaves.unreachable.erase(slave->id);

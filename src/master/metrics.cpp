@@ -50,6 +50,18 @@ Metrics::Metrics(const Master& master)
     elected(
         "master/elected",
         defer(master, &Master::_elected)),
+    slaves_25_percent_reregistered_secs(
+        "master/slaves_25_percent_reregistered_secs"),
+    slaves_50_percent_reregistered_secs(
+        "master/slaves_50_percent_reregistered_secs"),
+    slaves_75_percent_reregistered_secs(
+        "master/slaves_75_percent_reregistered_secs"),
+    slaves_90_percent_reregistered_secs(
+        "master/slaves_90_percent_reregistered_secs"),
+    slaves_99_percent_reregistered_secs(
+        "master/slaves_99_percent_reregistered_secs"),
+    slaves_100_percent_reregistered_secs(
+        "master/slaves_100_percent_reregistered_secs"),
     slaves_connected(
         "master/slaves_connected",
         defer(master, &Master::_slaves_connected)),
@@ -223,6 +235,12 @@ Metrics::Metrics(const Master& master)
   process::metrics::add(uptime_secs);
   process::metrics::add(elected);
 
+  process::metrics::add(slaves_25_percent_reregistered_secs);
+  process::metrics::add(slaves_50_percent_reregistered_secs);
+  process::metrics::add(slaves_75_percent_reregistered_secs);
+  process::metrics::add(slaves_90_percent_reregistered_secs);
+  process::metrics::add(slaves_99_percent_reregistered_secs);
+  process::metrics::add(slaves_100_percent_reregistered_secs);
   process::metrics::add(slaves_connected);
   process::metrics::add(slaves_disconnected);
   process::metrics::add(slaves_active);
@@ -377,6 +395,12 @@ Metrics::~Metrics()
   process::metrics::remove(uptime_secs);
   process::metrics::remove(elected);
 
+  process::metrics::remove(slaves_25_percent_reregistered_secs);
+  process::metrics::remove(slaves_50_percent_reregistered_secs);
+  process::metrics::remove(slaves_75_percent_reregistered_secs);
+  process::metrics::remove(slaves_90_percent_reregistered_secs);
+  process::metrics::remove(slaves_99_percent_reregistered_secs);
+  process::metrics::remove(slaves_100_percent_reregistered_secs);
   process::metrics::remove(slaves_connected);
   process::metrics::remove(slaves_disconnected);
   process::metrics::remove(slaves_active);

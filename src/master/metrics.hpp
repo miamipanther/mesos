@@ -47,6 +47,12 @@ struct Metrics
   process::metrics::PullGauge uptime_secs;
   process::metrics::PullGauge elected;
 
+  process::metrics::PushGauge slaves_25_percent_reregistered_secs;
+  process::metrics::PushGauge slaves_50_percent_reregistered_secs;
+  process::metrics::PushGauge slaves_75_percent_reregistered_secs;
+  process::metrics::PushGauge slaves_90_percent_reregistered_secs;
+  process::metrics::PushGauge slaves_99_percent_reregistered_secs;
+  process::metrics::PushGauge slaves_100_percent_reregistered_secs;
   process::metrics::PullGauge slaves_connected;
   process::metrics::PullGauge slaves_disconnected;
   process::metrics::PullGauge slaves_active;

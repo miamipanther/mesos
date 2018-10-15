@@ -1118,6 +1118,8 @@ private:
 
   void doRegistryGc();
 
+  void updateReregistrationMetrics();
+
   void _doRegistryGc(
       const hashset<SlaveID>& toRemoveUnreachable,
       const hashset<SlaveID>& toRemoveGone,
@@ -2287,6 +2289,9 @@ private:
   process::Time startTime; // Start time used to calculate uptime.
 
   Option<process::Time> electedTime; // Time when this master is elected.
+
+  // expected agents count to re-register with the newly elected master
+  Option<int> expectedAgentCount;
 
   // Validates the framework including authorization.
   // Returns None if the framework is valid.
