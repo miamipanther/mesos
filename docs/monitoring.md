@@ -417,6 +417,48 @@ unhealthy or that they are not able to connect to the elected master.
       decrease.</td>
   <td>Gauge</td>
 </tr>
+<tr>
+  <td>
+  <code>master/recovered_agents_25_percent_reregistered_secs</code>
+  </td>
+  <td>The elapsed time when 25 percentile of previously registered agents to re-register after master failover in secs</td>
+  <td>Gauge</td>
+</tr>
+<tr>
+  <td>
+  <code>master/recovered_agents_50_percent_reregistered_secs</code>
+  </td>
+  <td>The elapsed time when 50 percentile of previously registered agents to re-register after master failover in secs</td>
+  <td>Gauge</td>
+</tr>
+<tr>
+  <td>
+  <code>master/recovered_agents_75_percent_reregistered_secs</code>
+  </td>
+  <td>The elapsed time when 75 percentile of previously registered agents to re-register after master failover in secs</td>
+  <td>Gauge</td>
+</tr>
+<tr>
+  <td>
+  <code>master/recovered_agents_90_percent_reregistered_secs</code>
+  </td>
+  <td>The elapsed time when 90 percentile of previously registered agents to re-register after master failover in secs</td>
+  <td>Gauge</td>
+</tr>
+<tr>
+  <td>
+  <code>master/recovered_agents_99_percent_reregistered_secs</code>
+  </td>
+  <td>The elapsed time when 99 percentile of previously registered agents to re-register after master failover in secs</td>
+  <td>Gauge</td>
+</tr>
+<tr>
+  <td>
+  <code>master/recovered_agents_100_percent_reregistered_secs</code>
+  </td>
+  <td>The elapsed time when 100 percentile of previously registered agents to re-register after master failover in secs</td>
+  <td>Gauge</td>
+</tr>
 </table>
 
 #### Frameworks

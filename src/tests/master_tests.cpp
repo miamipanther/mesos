@@ -2397,6 +2397,77 @@ TEST_F(MasterTest, MetricsInMetricsEndpoint)
 }
 
 
+// These tests verify that the reregistration percentile metrics
+// do not exist when the master starts but only present after it
+// failover.
+TEST_F(MasterTest, ReregistrationMetricsInMetricsEndpoint)
+{
+  // Start a master.
+  master::Flags masterFlags = CreateMasterFlags();
+  Try<Owned<cluster::Master>> master = StartMaster(masterFlags);
+  ASSERT_SOME(master);
+
+  // Start a slave.
+  Future<SlaveRegisteredMessage> slaveRegisteredMessage =
+    FUTURE_PROTOBUF(SlaveRegisteredMessage(), master.get()->pid, _);
+
+  // Reuse slaveFlags so both StartSlave() use the same work_dir.
+  slave::Flags slaveFlags = this->CreateSlaveFlags();
+
+  StandaloneMasterDetector detector(master.get()->pid);
+  Try<Owned<cluster::Slave>> slave = StartSlave(&detector, slaveFlags);
+  ASSERT_SOME(slave);
+
+  AWAIT_READY(slaveRegisteredMessage);
+
+  JSON::Object snapshot = Metrics();
+
+  // Verify the reregistration percentile metrics do not exist
+  // when master started.
+  EXPECT_EQ(0u, snapshot.values.count(
+      "master/recovered_agents_25_percent_reregistered_secs"));
+  EXPECT_EQ(0u, snapshot.values.count(
+      "master/recovered_agents_50_percent_reregistered_secs"));
+  EXPECT_EQ(0u, snapshot.values.count(
+      "master/recovered_agents_75_percent_reregistered_secs"));
+  EXPECT_EQ(0u, snapshot.values.count(
+      "master/recovered_agents_90_percent_reregistered_secs"));
+  EXPECT_EQ(0u, snapshot.values.count(
+      "master/recovered_agents_99_percent_reregistered_secs"));
+  EXPECT_EQ(0u, snapshot.values.count(
+      "master/recovered_agents_100_percent_reregistered_secs"));
+
+  // Restart the master.
+  master->reset();
+  master = StartMaster(masterFlags);
+  ASSERT_SOME(master);
+
+  // Have the agent reregister with the master.
+  detector.appoint(master.get()->pid);
+  Clock::pause();
+  Clock::advance(slaveFlags.registration_backoff_factor);
+  Clock::settle();
+  AWAIT_READY(slaveRegisteredMessage);
+
+  JSON::Object snapshot1 = Metrics();
+
+  // Verify the reregistration percentile metrics present
+  // after the master failover.
+  EXPECT_EQ(1u, snapshot1.values.count(
+      "master/recovered_agents_25_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot1.values.count(
+      "master/recovered_agents_50_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot1.values.count(
+      "master/recovered_agents_75_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot1.values.count(
+      "master/recovered_agents_90_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot1.values.count(
+      "master/recovered_agents_99_percent_reregistered_secs"));
+  EXPECT_EQ(1u, snapshot1.values.count(
+      "master/recovered_agents_100_percent_reregistered_secs"));
+}
+
+
 // Ensures that an empty response arrives if information about
 // registered slaves is requested from a master where no slaves
 // have been registered.

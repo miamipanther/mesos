@@ -1701,8 +1701,12 @@ Future<Nothing> Master::_recover(const Registry& registry)
   // the allocator is already initialized and ready to perform
   // allocations. An allocator may decide to hold off with allocation
   // until after it restores a view of the cluster state.
-  int expectedAgentCount = registry.slaves().slaves().size();
-  allocator->recover(expectedAgentCount, quotas);
+  int recoveredAgentCount = registry.slaves().slaves().size();
+  allocator->recover(recoveredAgentCount, quotas);
+
+  // Construct agents registration metrics during master failover.
+  metrics->agentReregistrations = Metrics::AgentReregistrations(
+      recoveredAgentCount, electedTime.get());
 
   // TODO(alexr): Consider adding a sanity check: whether quotas are
   // satisfiable given all recovering agents reregister. We may want
@@ -7590,6 +7594,8 @@ void Master::__reregisterSlave(
   slave->reregisteredTime = Clock::now();
 
   ++metrics->slave_reregistrations;
+
+  metrics->agentReregistrations->incrementAgentReregistered();
 
   slaves.removed.erase(slave->id);
   slaves.unreachable.erase(slave->id);

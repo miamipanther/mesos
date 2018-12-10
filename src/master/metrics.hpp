@@ -86,6 +86,30 @@ struct Metrics
   // Message counters.
   process::metrics::Counter dropped_messages;
 
+  // Metrics specific for agent reregistration during master failover.
+  struct AgentReregistrations
+  {
+    AgentReregistrations(
+        const int& _recoveredAgentCount, const process::Time& _electedTime);
+
+    ~AgentReregistrations();
+
+    void incrementAgentReregistered();
+
+    int reregisteredAgentCount;
+    int recoveredAgentCount;
+    process::Time electedTime;
+
+    process::metrics::PushGauge recovered_agents_25_percent_reregistered_secs;
+    process::metrics::PushGauge recovered_agents_50_percent_reregistered_secs;
+    process::metrics::PushGauge recovered_agents_75_percent_reregistered_secs;
+    process::metrics::PushGauge recovered_agents_90_percent_reregistered_secs;
+    process::metrics::PushGauge recovered_agents_99_percent_reregistered_secs;
+    process::metrics::PushGauge recovered_agents_100_percent_reregistered_secs;
+  };
+
+  Option<AgentReregistrations> agentReregistrations;
+
   // HTTP cache hits.
   // TODO(bevers): Collect these per endpoint once per-endpoint
   // metrics get merged.

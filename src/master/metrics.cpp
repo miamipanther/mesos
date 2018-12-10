@@ -15,6 +15,7 @@
 // limitations under the License.
 
 #include <string>
+#include <cmath>
 
 #include <mesos/scheduler/scheduler.hpp>
 
@@ -559,6 +560,77 @@ void Metrics::incrementTasksStates(
 
   Counter counter = tasks_states[state][source].get(reason).get();
   counter++;
+}
+
+
+Metrics::AgentReregistrations::AgentReregistrations(
+    const int& _recoveredAgentCount,
+    const process::Time& _electedTime)
+  : reregisteredAgentCount(0),
+    recoveredAgentCount(_recoveredAgentCount),
+    electedTime(_electedTime),
+    recovered_agents_25_percent_reregistered_secs(
+        "master/recovered_agents_25_percent_reregistered_secs"),
+    recovered_agents_50_percent_reregistered_secs(
+        "master/recovered_agents_50_percent_reregistered_secs"),
+    recovered_agents_75_percent_reregistered_secs(
+        "master/recovered_agents_75_percent_reregistered_secs"),
+    recovered_agents_90_percent_reregistered_secs(
+        "master/recovered_agents_90_percent_reregistered_secs"),
+    recovered_agents_99_percent_reregistered_secs(
+        "master/recovered_agents_99_percent_reregistered_secs"),
+    recovered_agents_100_percent_reregistered_secs(
+        "master/recovered_agents_100_percent_reregistered_secs")
+{
+  process::metrics::add(recovered_agents_25_percent_reregistered_secs);
+  process::metrics::add(recovered_agents_50_percent_reregistered_secs);
+  process::metrics::add(recovered_agents_75_percent_reregistered_secs);
+  process::metrics::add(recovered_agents_90_percent_reregistered_secs);
+  process::metrics::add(recovered_agents_99_percent_reregistered_secs);
+  process::metrics::add(recovered_agents_100_percent_reregistered_secs);
+}
+
+
+Metrics::AgentReregistrations::~AgentReregistrations()
+{
+  process::metrics::remove(recovered_agents_25_percent_reregistered_secs);
+  process::metrics::remove(recovered_agents_50_percent_reregistered_secs);
+  process::metrics::remove(recovered_agents_75_percent_reregistered_secs);
+  process::metrics::remove(recovered_agents_90_percent_reregistered_secs);
+  process::metrics::remove(recovered_agents_99_percent_reregistered_secs);
+  process::metrics::remove(recovered_agents_100_percent_reregistered_secs);
+}
+
+
+void Metrics::AgentReregistrations::incrementAgentReregistered()
+{
+  reregisteredAgentCount++;
+
+  Duration duration = process::Clock::now() - electedTime;
+
+  if (reregisteredAgentCount == ceil(recoveredAgentCount * 0.25)) {
+    recovered_agents_25_percent_reregistered_secs = duration.secs();
+  }
+
+  if (reregisteredAgentCount == ceil(recoveredAgentCount * 0.50)) {
+    recovered_agents_50_percent_reregistered_secs = duration.secs();
+  }
+
+  if (reregisteredAgentCount == ceil(recoveredAgentCount * 0.75)) {
+    recovered_agents_75_percent_reregistered_secs = duration.secs();
+  }
+
+  if (reregisteredAgentCount == ceil(recoveredAgentCount * 0.90)) {
+    recovered_agents_90_percent_reregistered_secs = duration.secs();
+  }
+
+  if (reregisteredAgentCount == ceil(recoveredAgentCount * 0.99)) {
+    recovered_agents_99_percent_reregistered_secs = duration.secs();
+  }
+
+  if (reregisteredAgentCount == recoveredAgentCount) {
+    recovered_agents_100_percent_reregistered_secs = duration.secs();
+  }
 }
 
 
