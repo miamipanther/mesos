@@ -2297,6 +2297,7 @@ string Master::Http::STATE_HELP()
         "         \"agent_ping_timeout\" : \"15secs\",",
         "         \"registry_store_timeout\" : \"20secs\",",
         "         \"max_completed_frameworks\" : \"50\",",
+        "         \"max_completed_framework_ids\" : \"100\",",
         "         \"quiet\" : \"false\",",
         "         \"allocator\" : \"HierarchicalDRF\",",
         "         \"hostname_lookup\" : \"true\",",

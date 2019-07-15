@@ -11379,6 +11379,8 @@ void Master::removeFramework(Framework* framework)
 
   allocator->resume();
 
+  // Save framework IDs in bounded hash map.
+  frameworks.completedIds.set(framework->id(), true);
   // The framework pointer is now owned by `frameworks.completed`.
   frameworks.completed.set(framework->id(), Owned<Framework>(framework));
 
@@ -12745,7 +12747,7 @@ void Master::removeInverseOffer(InverseOffer* inverseOffer, bool rescind)
 
 bool Master::isCompletedFramework(const FrameworkID& frameworkId) const
 {
-  return frameworks.completed.contains(frameworkId);
+  return frameworks.completedIds.contains(frameworkId);
 }
 
 

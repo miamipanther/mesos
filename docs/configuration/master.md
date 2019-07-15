@@ -439,6 +439,18 @@ Maximum number of completed frameworks to store in memory. (default: 50)
   </td>
 </tr>
 
+<tr id="max_completed_framework_ids">
+  <td>
+    --max_completed_framework_ids=VALUE
+  </td>
+  <td>
+Maximum number of IDs stored for completed framework detection. This
+value can be set much higher than `--max_completed_frameworks`,
+and should be tuned higher for clusters that have a high rate of
+framework churn. (default: 100)
+  </td>
+</tr>
+
 <tr id="max_completed_tasks_per_framework">
   <td>
     --max_completed_tasks_per_framework=VALUE

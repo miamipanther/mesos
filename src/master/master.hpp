@@ -2213,11 +2213,16 @@ private:
   struct Frameworks
   {
     Frameworks(const Flags& masterFlags)
-      : completed(masterFlags.max_completed_frameworks) {}
+      : completed(masterFlags.max_completed_frameworks),
+        completedIds(masterFlags.max_completed_framework_ids) {}
 
     hashmap<FrameworkID, Framework*> registered;
 
     BoundedHashMap<FrameworkID, process::Owned<Framework>> completed;
+
+    // The hash value is not meaningful as we using it to
+    // simulate bounded hashset
+    BoundedHashMap<FrameworkID, bool> completedIds;
 
     // Principals of frameworks keyed by PID.
     // NOTE: Multiple PIDs can map to the same principal. The

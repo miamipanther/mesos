@@ -594,6 +594,14 @@ mesos::internal::master::Flags::Flags()
       "Maximum number of completed frameworks to store in memory.",
       DEFAULT_MAX_COMPLETED_FRAMEWORKS);
 
+  add(&Flags::max_completed_framework_ids,
+      "max_completed_framework_ids",
+      "Maximum number of IDs stored for completed framework detection.\n"
+      "This value can be set much higher than `--max_completed_frameworks`,\n"
+      "and should be tuned higher for clusters that have a high rate of\n"
+      "framework churn.",
+      DEFAULT_MAX_COMPLETED_FRAMEWORK_IDS);
+
   add(&Flags::max_completed_tasks_per_framework,
       "max_completed_tasks_per_framework",
       "Maximum number of completed tasks per framework to store in memory.",

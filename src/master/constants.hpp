@@ -99,6 +99,9 @@ constexpr size_t DEFAULT_MAX_OPERATOR_EVENT_STREAM_SUBSCRIBERS = 1000;
 // Default maximum number of completed frameworks to store in the cache.
 constexpr size_t DEFAULT_MAX_COMPLETED_FRAMEWORKS = 50;
 
+// Default maximum number of completed framework IDs to store in the cache.
+constexpr size_t DEFAULT_MAX_COMPLETED_FRAMEWORK_IDS = 100;
+
 // Default maximum number of completed tasks per framework
 // to store in the cache.
 constexpr size_t DEFAULT_MAX_COMPLETED_TASKS_PER_FRAMEWORK = 1000;

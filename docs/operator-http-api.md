@@ -181,6 +181,10 @@ Content-Type: application/json
         "value": "50"
       },
       {
+        "name": "max_completed_framework_ids",
+        "value": "100"
+      },
+      {
         "name": "max_completed_tasks_per_framework",
         "value": "1000"
       },
