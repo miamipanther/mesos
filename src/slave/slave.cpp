@@ -6412,6 +6412,18 @@ void Slave::executorMessage(
 // within that (more generous) timeout.
 void Slave::ping(const UPID& from, bool connected)
 {
+  // Don't respond to pings if the agent cannot detect the master
+  // (e.g., due to failing to connect to ZK) because it stops responding
+  // to control messages such as run/kill tasks. It's better to have
+  // the master eventually mark the agent as partitioned after prolonged
+  // ZK disconnection than to silently drop messages.
+  if (master.isNone()) {
+    LOG(WARNING) << "Ignoring ping message"
+                 << " from " << from
+                 << " because the master cannot be detected";
+    return;
+  }
+
   VLOG(2) << "Received ping from " << from;
 
   if (!connected && state == RUNNING) {
