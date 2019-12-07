@@ -261,6 +261,11 @@ struct Flags : public virtual flags::FlagsBase
         "If set to false, disables the memory profiling functionality\n"
         "of libprocess.",
         false);
+
+    add(&Flags::serve_event_timeout_ms,
+        "serve_event_timeout_ms",
+        "If set, log will be triggered while the time of serving event\n"
+        "exceeds this timeout (ms).\n");
   }
 
   Option<net::IP> ip;
@@ -268,6 +273,7 @@ struct Flags : public virtual flags::FlagsBase
   Option<net::IP> advertise_ip;
   Option<int> port;
   Option<int> advertise_port;
+  Option<int> serve_event_timeout_ms;
   bool require_peer_address_ip_match;
   bool memory_profiling;
 };
@@ -3052,7 +3058,17 @@ void ProcessManager::resume(ProcessBase* process)
       //
       // TODO(bmahler): Consider providing recovery mechanisms.
       try {
+        process::Time startTime = process::Clock::now();
         process->serve(std::move(*event));
+        double duration = (process::Clock::now() - startTime).ms();
+        if (libprocess_flags->serve_event_timeout_ms.isSome()) {
+          if (duration >= libprocess_flags->serve_event_timeout_ms.get()){
+            LOG(INFO) << "libprocess took " << duration << " (ms)"
+                      << " to serve event '"
+                      << event->operator JSON::Object() << "'";
+          }
+        }
+
       } catch (const std::exception& e) {
         LOG(FATAL) << "Aborting libprocess: '" << process->pid << "'"
                    << " threw exception: " << e.what();

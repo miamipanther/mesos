@@ -443,7 +443,6 @@ public:
     return std::move(*f)(std::forward<Args>(args)...);
   }
 
-private:
   struct Callable
   {
     virtual ~Callable() = default;

@@ -288,6 +288,30 @@ inline Event::operator JSON::Object() const
     void visit(const DispatchEvent& event) override
     {
       object->values["type"] = "DISPATCH";
+
+      //"functionType":77
+      object->values["functionType"] = *event.functionType.get()->name();
+
+      //"functionType1":"PKSt9type_info"
+      object->values["functionType1"] = typeid(*event.functionType).name();
+
+      //"functionName":"N6lambda12CallableOnceIFvPN7process11ProcessBaseEEEE"
+      object->values["functionName"] = typeid(*event.f).name();
+
+      //"functionName1":"N6lambda12CallableOnceIFvPN7process11ProcessBaseEEEE"
+      object->values["functionName1"] = typeid(*event.f.get()).name();
+
+      //"functionName2":"PN6lambda12CallableOnceIFvPN7process11ProcessBaseEEE8CallableE"
+      auto r = &(*event.f.get()->f.get());
+      object->values["functionName2"] = typeid(r).name();
+
+      //"functionName3":"PN6lambda12CallableOnceIFvPN7process11ProcessBaseEEE8CallableE"
+      object->values["functionName3"] = typeid(event.f.get()->f.get()).name();
+
+      //"functionName3":"PN6lambda12CallableOnceIFvPN7process11ProcessBaseEEE8CallableE"
+      object->values["functionName4"] = typeid(*event.f.get()->f.get()).name();
+
+      //object->values["functionName2"] = typeid(dynamic_cast<lambda::CallableOnce::CallableFn>(*(event.f.get()->f.get())).f).name();
     }
 
     void visit(const ExitedEvent& event) override
